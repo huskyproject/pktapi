@@ -1,0 +1,123 @@
+Dies ist nur eine blitz-fassung der bisher unterstÅtzten Funktionen der
+PKTAPI32.DLL:
+
+Funktionen:
+
+PktApiOpen(struct _minf *);
+
+Muss vor dem Aufruf der API-Funktionen passieren.
+MsgApiOpen() ist dann nicht mehr nîtig !
+
+
+PktApiClose();
+
+Schliesst die Api. MsgCloseApi() ist nicht mehr nîtig.
+
+
+HPKT PktOpenPkt(char *name, word mode, word type);
+
+ôffnet ein PKT zum Lesen ODER schreiben.
+
+Mode: PKTMODE_READ 
+      PKTMODE_WRITE
+
+Type: PKTTYPE_2
+
+
+PktClosePkt(HPKT hp);
+
+Schliesst ein PKT.
+
+
+PktReadMsg(HPKT hp, XMSG *xmsg, dword textlen, char *text);
+
+Liesst eine Nachricht aus einem PKT was mit PKTMODE_READ geîffnet wurde.
+XMSG enthÑlt den Nachrichtenheader. Ist text == NULL oder textlen = 0, wird 
+der Messagetext nicht gelesen und kann spÑter eingelesen werden indem xmsg auf
+NULL gesetzt wird. 
+Rueckgabewerte: 0 - Die Nachricht wurde komplett eingelesen
+                1 - Die Nachricht wurde nicht komplett eingelesen.
+                    Durch einen weiteren Aufruf mit xmsg = NULL, wird der 
+                    nÑchste Teil der Nachricht eingelesen.
+               -1 - Es ist ein Fehler aufgetreten. (EOF oder BAD-Packet)
+
+
+PktReadMsgComplete(HPKT hp, XMSG *xmsg, char **text);
+
+Liesst eine Nachricht komplett ein. Dazu alloziert die API ein genuegend 
+grossen Speicherbereich, der mit PktFreeText() freigegeben werden muss.
+PktReadMsgComplete ist nicht in allen FÑllen die effizienteste Lîsung, aber
+meistens die einfachste ! ;)
+
+
+PktWriteMsg(HPKT hp, XMSG *xmsg, word fAppend, char *text);
+
+Schreibt eine Nachricht in ein mit PKTMODE_WRITE geîffnetes Packet. 
+fAppend gibt an, ob dem Nachrichtentext noch weiterer Text folgt. Ist 
+fAppend = 1, dann kann weiterer Text geschrieben werden indem xmsg = NULL 
+gesetzt wird. Die API beginnt eine neue Mail in jedem fall, wenn xmsg != NULL 
+ist. 
+
+
+sword MAPIENTRY PktCopyPktHdr(HPKT dest, HPKT src)
+
+Kopiert die Informationen des PKT-Headers von SRC nach DEST. Diese Funktion
+ist nÅtzlich fÅr Pkt-Filter u.Ñ. Tools.
+
+
+sword MAPIENTRY PktCreateCtrlBuf(char *sztext, PKTCTRLBUF *ctrlbuf)
+
+Erzeugt aus einer vorliegenden Mail aus den Seen-By und Path-Lines einen 
+Ctrl-Buffer, der die Informationen in binÑrer Form enthÑlt.
+Der CtrlBuffer muss mit PktFreeCtrlBuf() wieder frei gegeben werden.
+
+sword MAPIENTRY PktFreeCtrlBuf(PKTCTRLBUF *ctrl)
+
+Gibt den Speicher frei den ein Ctrl-Buffer belegt.
+
+
+char * MAPIENTRY PktConvertCtrlToText(PKTCTRLBUF *ctrl)
+
+Erzeugt aus einem Ctrl-Buffer einen lesbaren String laut FTS004. Der String hat
+die Form:
+
+SEEN-BY: <....>
+\001PATH: <....>
+
+ggf. werden mehrere SEEn-BY: und PATH: Zeilen eingefÅgt. Keine Zeile ist 
+lÑnger als 80 Zeichen. Der String kann so an eine Mail gehÑngt werden.
+
+
+sword MAPIENTRY PktCtrlAddSeenby(PKTCTRLBUF *ctrl, NETADDR *addr)
+
+Fögt eine Adresse in die Liste der Seen-By Adressen hinzu, falls 
+sie nicht vorhanden ist. 
+
+Return: 0 wenn die Adresse hinzugefÅgt wurde
+        1 die Adresse war bereits in den Seen-By's vorhanden
+
+
+sword MAPIENTRY PktCtrlAddPath(PKTCTRLBUF *ctrl, NETADDR *addr)
+
+FÅgt eine Adresse in die Path-Lines hinzu.
+
+
+sword MAPIENTRY PktCtrlChkPath(PKTCTRLBUF *ctrl, NETADDR *addr)
+
+PrÅft ob eine Adresse in den Path-Lines vorhanden ist.
+
+Return: 0 wenn sie nicht vorhanden ist
+        1 wenn sie vorhanden ist
+
+
+Supportet Packet-Types:
+
+Packet 2 (StoneAge) (FTS001)
+Packet 2+           (FSC038/045)
+Packet 2.2          (FSC048)  
+
+Planned Packet-Types:
+Packet 3            (FSC077)
+
+
+

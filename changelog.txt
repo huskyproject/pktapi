@@ -1,0 +1,24 @@
+PktAPI 1.0 - 
+
+Alpha 2
+
+- Bug in PktWriteMsg(): Wurde eine Message vollstaendig geschrieben 
+  (fAppend = 0) und anschliessend wird versucht an die Mail etwas anzuh„ngen 
+  (XMSG = 0), wurde der Text in das PKT geschrieben (was dazu fhrt, das 
+  es defekt ist).
+
+
+Alpha 1
+
+- Support fr Plaformunabh„ngige Versionen
+
+- Erste PKTAPI. Unterstuetzt folgende PKT-Typen:
+
+  - Packet 2 (StoneAge) (FTS001)
+  - Packet 2+           (FSC038/045)
+  - Packet 2.2          (FSC048)  
+
+  Vorbereitete fr PKT-Typen:
+
+  - Packet 3            (FSC077)
+

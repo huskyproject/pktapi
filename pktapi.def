@@ -1,0 +1,24 @@
+LIBRARY PKTAPI32 INITINSTANCE TERMINSTANCE
+
+DESCRIPTION "PktAPI.  Copyright 2000 by Oliver 'Attila' Grimm.  All rights reserved."
+
+HEAPSIZE 0
+STACKSIZE 32768
+; STACKSIZE 0
+PROTMODE
+DATA MULTIPLE NONSHARED
+
+EXPORTS
+  PktOpenApi          @1
+  PktCloseApi         @2
+  PktOpenPkt          @3
+  PktInvalidPh        @4
+  pktapierr           @5
+  PktCopyPktHdr       @6
+  PktCreateCtrlBuf    @7
+  PktFreeCtrlBuf      @8
+  PktConvertCtrlToText @9
+  PktCtrlAddSeenby     @10
+  PktCtrlAddPath       @11
+  PktCtrlChkPath       @12
+
